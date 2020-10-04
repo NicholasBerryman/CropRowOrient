@@ -47,6 +47,19 @@ yAbs = cv2.convertScaleAbs(yFilter)
 sobel = cv2.addWeighted(xAbs, 0.5, yAbs, 0.5, 0)
 
 
+# Row counting for approximate potential centre line
+rows = np.vsplit(filtered, 480)
+count = 0
+potentialRow = -1
+i = 0
+for row in rows:
+	newCount = cv2.countNonZero(row)
+	if (newCount > count):
+		count = newCount
+		potentialRow = i 
+	i += 1
+
+
 #Split image into segments
 nCols = 1
 xOffset = 640/nCols
@@ -57,23 +70,16 @@ i = 0
 for c in imageParts:
         i+=1
         cv2.imshow("cropped"+str(i),c)
-        
-# Defining our window
-windowHeight = 50
-windowOffset = 50
 
-# Row counting for approximate potential centre line
-rows = np.vsplit(filtered, 480)
-count = 0
-potentialRow = -1
-i = 0
-for row in rows:
-	if (i > 480/2 - windowHeight + windowOffset and i < 480/2 + windowHeight + windowOffset):
-		newCount = cv2.countNonZero(row)
-		if (newCount > count):
-			count = newCount
-			potentialRow = i 
-	i += 1
+# Defining our window
+windowWidth = 200
+windowHeight = 75
+windowOffsetY = 0
+windowOffsetX = 0
+windowMinX = int(640/2 - windowWidth - windowOffsetX)
+windowMaxX = int(640/2 + windowWidth - windowOffsetX)
+windowMinY = int(480/2 - windowHeight - windowOffsetY)
+windowMaxY = int(480/2 + windowHeight - windowOffsetY)
 
 
 
@@ -84,7 +90,7 @@ for part in imageParts:
         contours, heirarchy = cv2.findContours(part, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for contour in contours:
                 cx, cy = getContCentre(contour)
-                if (True): #TODO check distance (this is not d2 - not quite sure what it should be)
+                if (cx > windowMinX and cx < windowMaxX and cy > windowMinY and cy < windowMaxY): #TODO check distance (this is not d2 - not quite sure what it should be)
                         contour += [int(xOffset * i), 0]
                         allContours.append(contour)
         i+=1
@@ -105,8 +111,12 @@ final = rowLinear.intercept_ + 640 * rowLinear.coef_
 print("R^2: "+str(r2))
 
 # Draw Images
-cv2.line(image, (0, int(potentialRow)), (640, int(potentialRow)), (0,255,255))
+cv2.line(image, (0, int(intercept)), (640, int(final[0])), (0,255,255))
+cv2.rectangle(image, (windowMinX, windowMinY), (windowMaxX, windowMaxY), (255,0,0), 1)
 i = 0
+for x in rowXs:
+        cv2.circle(image, (x, rowYs[i]), 3, (0,255,0))
+        i += 1
         
 cv2.imshow("linear combination", linearCombine)
 cv2.imshow("threshold", threshImage)
