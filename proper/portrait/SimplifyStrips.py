@@ -18,13 +18,17 @@ def getContCentre(contour):
 	return cx, cy
 
 
-outFile = open('simpliStripsHorizontal.csv', 'w')
+outFile = open('simpliStripsVertical.csv', 'w')
 outFile.write("ID,Real Angle,Estimated Angle,Line Midpoint\n")
 
 for path in os.listdir():
         if '.jpg' in path:
                 imgName = path#input("File Name: ")
                 image = cv2.imread(imgName)
+
+                
+                # Rotate these images because they are portrait
+                image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
 
                 # Convert to greyscale with custom linear combination (From source)
                 greyCoeffs = [-0.311, 1.262, -0.884] #BGR
@@ -43,8 +47,8 @@ for path in os.listdir():
 
                 
                 #Define image dimensions
-                imageWidth = 640
-                imageHeight = 480
+                imageWidth = 480
+                imageHeight = 640
 
                 #Split image into segments
                 nRows = 5

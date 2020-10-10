@@ -16,7 +16,7 @@ def getContCentre(contour):
                 cx = int(M['m10']/M['m00'])
                 cy = int(M['m01']/M['m00'])
         return cx, cy
-outFile = open('steepGradientHorizontal.csv', 'w')
+outFile = open('steepGradientVertical.csv', 'w')
 outFile.write("ID,Real Angle,Estimated Angle,Line Midpoint\n")
 for path in os.listdir():
         if '.jpg' in path:
@@ -24,6 +24,9 @@ for path in os.listdir():
                 image = cv2.imread(imgName)
 
 
+                # Rotate these images because they are portrait
+                image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+                
                 # Convert to greyscale with custom linear combination (From source)
                 greyCoeffs = [-0.311, 1.262, -0.884] #BGR
                 coeffNP = np.array(greyCoeffs).reshape((1,3))
@@ -40,8 +43,8 @@ for path in os.listdir():
                 filtered = cv2.morphologyEx(threshImage, cv2.MORPH_OPEN, kernel) #Erodes then dilates
 
                 #Define image dimensions
-                imageWidth = 640
-                imageHeight = 480
+                imageWidth = 480
+                imageHeight = 640
 
                 # Column counting for green pixel proportions (candidate row)
                 windowWidth = 100 #Doubled in search
