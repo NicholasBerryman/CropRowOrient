@@ -1,0 +1,16 @@
+Todo:
+    Fix horizontal vs vertical issues (e.g. double check the row/column counting for approximate canditate line)
+        Also just generally copy everything over to portrait section
+    Optimise all
+        Especially SteepGradient pixel iteration
+    Test out contour centre vs all pixels in windowRegression
+    Properly utilise horizontal search space in horizontal strips method
+    
+    Make sure to mention Hough Transform inapplicability
+    
+    Clean up all code
+    
+    
+    
+    
+    
