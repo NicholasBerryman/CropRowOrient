@@ -29,7 +29,7 @@ for path in os.listdir():
                 image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
                 
                 # Convert to greyscale with custom linear combination (From source)
-                greyCoeffs = [-0.311, 1.262, -0.884] #BGR
+                greyCoeffs = [-1, 2, -1] #BGR
                 coeffNP = np.array(greyCoeffs).reshape((1,3))
                 linearCombine = cv2.transform(image,coeffNP) #Greyscale image
 
